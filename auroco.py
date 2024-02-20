@@ -21,7 +21,9 @@ ARUCO_DICT = {
 def hizalanma(x,y):
     deger_y = 1500-((cap_w_center-x)//5)
     deger_x = 1500-((cap_h_center-y)//5)
-    
+    print(deger_x)
+    print(deger_y)
+    print()
 
 def detect_markers(image):
     
