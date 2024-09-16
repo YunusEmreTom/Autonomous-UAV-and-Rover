@@ -3,34 +3,39 @@ from ultralytics import YOLO
 import time
 
 # YOLOv8 modelini yükle
-model = YOLO(r"best.pt")
-model.to("cuda")
+model = YOLO("dosya-yolu/best.pt") #modelinizin bulunduğu dosya yolunu buraya giriniz
+model.to("cuda") #modeli cuda ile kullanmak için cuda, cpu ile kullanmak için cpu yazınız. Eğer cuda yüklü değilse cpu ile çalıştırabilirsiniz.
+
 # Kamerayı başlat
-cap = cv2.VideoCapture(0)  # 0, varsayılan kamerayı belirtir; eğer harici bir kamera kullanıyorsan, cihaz ID'sini belirtebilirsin.
+cap = cv2.VideoCapture(0)  # 0, varsayılan kamerayı belirtir; eğer harici bir kamera kullanıyorsan, cihaz ID'sini belirtebilirsin. örn 0,1,2,3 vb...
 
-prev_frame_time = 0
-new_frame_time = 0
-fps_display_interval = 1  # FPS bilgilerini her saniyede bir güncelle
-fps_display_time = time.time()
 
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Kodlayıcı ayarı
-out = cv2.VideoWriter('output_video.mp4', fourcc, 30.0, (int(cap.get(3)), int(cap.get(4))))  # Çıktı dosyası
+# FPS hesaplamak için değişkenler
+prev_frame_time         = 0
+new_frame_time          = 0
+fps_display_interval    = 1  # FPS bilgilerini her saniyede bir güncelle
+fps_display_time        = time.time()
+
+
+# Görüntümü kaydetmek için bazı ayarlar
+fourcc                  = cv2.VideoWriter_fourcc(*'mp4v')  # Kodlayıcı ayarı
+out                     = cv2.VideoWriter('output_video.mp4', fourcc, 30.0, (int(cap.get(3)), int(cap.get(4))))  # Çıktı dosyası
 
 # Skorlama eşik değeri
-score_threshold = 0.5
+score_threshold         = 0.5
 
 while True:
     ret, frame = cap.read()  # Kameradan bir kare oku
     
     
-    if not ret:
+    if not ret: # kamera açık mı diye kontrol et
         break
-    results = model(frame)
-    new_frame_time = time.time()
-    
-    # Modeli kare üzerinde çalıştır
-    
 
+
+    results         = model(frame) #modelimizi çalıştır
+    new_frame_time  = time.time()
+    
+    
     # Sonuçları filtreleme
     annotated_frame = frame.copy()  # Sonuçları orijinal kareye çizmeye başlamadan önce bir kopyasını al
     
@@ -66,7 +71,7 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Kamerayı ve pencereleri serbest bırak
+# Kamerayı, pencereleri ve kaydı serbest bırak
 cap.release()
 out.release()
 cv2.destroyAllWindows()
